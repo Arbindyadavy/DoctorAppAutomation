@@ -13,10 +13,11 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>io.appium</groupId>
-			<artifactId>java-client</artifactId>
-			<version>8.5.1</version>
-		</dependency>
+    <groupId>io.appium</groupId>
+    <artifactId>java-client</artifactId>
+    <version>8.5.1</version>
+</dependency>
+
 		<!--
 		https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-support -->
 		<dependency>
@@ -37,6 +38,11 @@
 			<version>1.5.6</version>
 		</dependency>-->
 
+<dependency>
+    <groupId>com.aventstack</groupId>
+    <artifactId>extentreports</artifactId>
+    <version>5.1.1</version>
+</dependency>
 
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
@@ -66,7 +72,17 @@
 			<version>7.42.0</version>
 		</dependency>
 
-	</dependencies>
+		<dependency>
+			<groupId>WindowAppTesting</groupId>
+			<artifactId>WindowAppTesting</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>NeuroPatientAppWebPortal</groupId>
+			<artifactId>NeuroPatientAppWebPortal</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+  </dependencies>
 
 
 	<build>

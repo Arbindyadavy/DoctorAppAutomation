@@ -1,141 +1,138 @@
 package com.neuro.GenericMethodAppium;
-import org.openqa.selenium.*;
 
+import org.openqa.selenium.*;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.util.Properties;
-import org.openqa.selenium.WebElement;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.util.Date;
+
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.remote.MobileCapabilityType;
+import com.aventstack.extentreports.*;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 
 public class Appium_Generic_Method {
-	private Properties prop;
-	 private WebDriverWait wait;
-	
-	//private static AndroidDriver <MobileElement>driver;
-	private static AndroidDriver driver;
-	private DesiredCapabilities capabilities;
-	private URL url;
-	private WebDriverWait waits;
-	private static Appium_Generic_Method utils;
 
-	public static Appium_Generic_Method getObject() {
+    private static AndroidDriver driver;
+    private static Appium_Generic_Method utils;
+    private WebDriverWait wait;
+    private static ExtentReports extent;
+    private static ExtentTest test;
 
-		if (utils == null) {
+ 
+    public static Appium_Generic_Method getObject() {
+        if (utils == null) {
+            utils = new Appium_Generic_Method();
+        }
+        return utils;
+    }
 
-			utils = new Appium_Generic_Method();
+    private Appium_Generic_Method() {
+       
+    }
 
-		}
+    
+    public AndroidDriver getDriver() {
+        return driver;
+    }
 
-		return utils;
+    
+    public void getCapabilities() throws Exception {
 
-	}
+        System.out.println("Starting Appium session...");
 
-	private Appium_Generic_Method() {
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+        capabilities.setCapability("deviceName", "emulator-5554");
+        capabilities.setCapability("platformName", "Android");
+        capabilities.setCapability("automationName", "UiAutomator2");
+        capabilities.setCapability("platformVersion", "11");
+        capabilities.setCapability("appPackage", "com.nedsappdoc");
+        capabilities.setCapability("appActivity", "com.nedsappdoc.MainActivity");
+        capabilities.setCapability("noReset", true);
 
-		loadPropertyFile();
+        driver = new AndroidDriver(
+                new URL("http://localhost:4723/wd/hub"),
+                capabilities
+        );
 
-	}
+        wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+    }
 
-	public void loadPropertyFile() {
-		prop = new Properties();
-		FileInputStream fis = null;
-		try {
-			fis = new FileInputStream(
-					"C:\\Users\\NEUROEQUILIBRIUM\\eclipse-workspace\\AppiumTesting\\src\\test\\resources\\config.propeties");
 
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+    public void startReport(String testName) {
 
-		try {
-			prop.load(fis);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        if (extent == null) {
+            String time = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            ExtentSparkReporter spark =
+                    new ExtentSparkReporter("reports/AutomationReport_" + time + ".html");
 
-	}
+            extent = new ExtentReports();
+            extent.attachReporter(spark);
+        }
+        test = extent.createTest(testName);
+    }
 
-	public AndroidDriver GETDRIVER() {
+  
+    public void logPass(String message) {
+        test.pass(message);
+    }
 
-		return driver;
+  
+    public void logFail(String message) {
+        String path = takeScreenshot("FAIL");
+        test.fail(message,
+                MediaEntityBuilder.createScreenCaptureFromPath(path).build());
+    }
 
-	}
+    public String takeScreenshot(String name) {
+        String time = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String path = "screenshots/" + name + "_" + time + ".png";
 
-	public AndroidDriver LaunchPhon(String DeviceType, String uiAutomator, String version, String deviceName,
-			String AppName, String deviceId) {
+        try {
+            File src = driver.getScreenshotAs(OutputType.FILE);
+            Files.createDirectories(new File("screenshots").toPath());
+            Files.copy(src.toPath(), new File(path).toPath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return path;
+    }
 
-		if (DeviceType.equalsIgnoreCase("Android")) {
+   
+    public void click(WebElement element, String stepName) {
+        try {
+            wait.until(ExpectedConditions.elementToBeClickable(element)).click();
+            logPass(stepName + " clicked successfully");
+        } catch (Exception e) {
+            logFail(stepName + " click failed");
+            throw e;
+        }
+    }
 
-			capabilities = new DesiredCapabilities();
-			capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "Appium");
-			capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "Android");
-			capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, version);
-			capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, deviceName);
-			capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, deviceId);
-			capabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, waits);
-			capabilities.setCapability("adbExecTimeout", "20000");
-			capabilities.setCapability(MobileCapabilityType.APP, "");
-			try {
 
-				url = new URL("http://127.0.0.1:4723/wd/hub");
+    public void scrollToText(String text) {
+        driver.findElement(AppiumBy.androidUIAutomator(
+                "new UiScrollable(new UiSelector().scrollable(true))"
+                        + ".scrollIntoView(new UiSelector().textContains(\"" + text + "\"))"));
+        logPass("Scrolled to text: " + text);
+    }
 
-			} catch (MalformedURLException e) {
+    
+    public void endReport() {
+        if (extent != null) {
+            extent.flush();
+        }
+    }
 
-				e.printStackTrace();
-			}
-
-			driver = new AndroidDriver(url, capabilities);
-
-		} else if (deviceName.equalsIgnoreCase("IOS")) {
-
-			try {
-
-				url = new URL("http://127.0.0.1:4723/wd/hub");
-
-			} catch (MalformedURLException e) {
-
-				e.printStackTrace();
-			}
-			driver = new AndroidDriver(url, capabilities);
-
-		}
-		return driver;
-
-	}
-	 public void click(WebElement element) {
-	        try {
-	            wait.until(ExpectedConditions.elementToBeClickable(element)).click();
-	        } catch (Exception e) {
-	            System.out.println("Click failed: " + e.getMessage());
-	        }
-	    }
-	
-	 
-	 public void scrollToText(String visibleText) {
-	        driver.findElement(AppiumBy.androidUIAutomator(
-	                "new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().textContains(\"" + visibleText + "\"))"));
-	    }
-	 
-	 
-	 
-	 public void takeScreenshot(String filename) {
-	        try {
-	            File src = driver.getScreenshotAs(OutputType.FILE);
-	            File dest = new File("screenshots/" + filename + ".png");
-	            Files.copy(src.toPath(), dest.toPath());
-	        } catch (IOException e) {
-	            System.out.println("Screenshot failed: " + e.getMessage());
-	        }
-	    } 
+    
+    public void quitDriver() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
 }

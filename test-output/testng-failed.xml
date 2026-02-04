@@ -5,8 +5,11 @@
     <classes>
       <class name="com.mobileAndroid.Launch_Doctor_Application">
         <methods>
+          <include name="beforeSuite"/>
+          <include name="tearDown"/>
           <include name="Verify_Doctor_Login_Page"/>
-          <include name="getCapabilities"/>
+          <include name="setup"/>
+          <include name="afterSuite"/>
         </methods>
       </class> <!-- com.mobileAndroid.Launch_Doctor_Application -->
     </classes>

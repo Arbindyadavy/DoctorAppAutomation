@@ -8,10 +8,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebElement;
 import org.testng.annotations.BeforeSuite;
 import com.google.common.collect.ImmutableMap;
-
-import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
-
 import io.appium.java_client.remote.MobileCapabilityType;
 
 public class Base_Test_Class {
@@ -52,8 +49,7 @@ public class Base_Test_Class {
 		boolean canScrollMore;
 		do {
 			canScrollMore = (Boolean) ((JavascriptExecutor) driver).executeScript("mobile: scrollGesture", ImmutableMap
-					.of("left", 100, "top", 100, "width", 200, "height", 200, "direction", "down", "percent", 3.0
-					// [170,1074][803,1242]
+					.of(
 					));
 		} while (canScrollMore);
 	}
@@ -100,4 +96,10 @@ public class Base_Test_Class {
 		}
 
 	}
+	
+	
+	
+	
+	
+	
 }
