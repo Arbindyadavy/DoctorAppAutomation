@@ -23,16 +23,21 @@ public class Doctor_App_Login_Page extends Doctor_App_Login_OR_Page{
 
 
 	public void LoginFunctionality () throws Exception {
-		WebUtil.click(TodysClick, "Doctor App Click Successfully");
+		WebUtil.click(TodysClick, "Doctor App");
 		Thread.sleep(1500);
-		WebUtil.click(ALLClick, "Doctor App ALL Tab Click Successfully");
+		WebUtil.click(ALLClick, "Doctor App ALL Tab ");
 		Thread.sleep(1500);
 		
 
-		WebUtil.click(ReportsClick, "Doctor App Prescription Click Successfully");
+		WebUtil.click(ReportsClick, "Doctor App Prescription ");
 		Thread.sleep(1500);
-		WebUtil.click(PrescriptionClick, "Doctor App Reports Tab Click Successfully");
+		WebUtil.click(PrescriptionClick, "Doctor App Reports Tab ");
 		Thread.sleep(1500);
+		
+		WebUtil.click(ALLClick, "Doctor App ALL Tab ");
+		Thread.sleep(1500);
+		
+		//WebUtil.click(Prescription, "Prescription Click ");
 //		Thread.sleep(1000);
 //		ReportsClick.click();
 //		Thread.sleep(1000);

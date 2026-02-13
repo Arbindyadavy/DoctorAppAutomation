@@ -21,5 +21,19 @@ public class Doctor_App_Login_OR_Page {
 
 	@FindBy(xpath = "//android.widget.TextView[@text='Chats']")
     protected WebElement ChatsClick;
+	
+	
 
+	@FindBy(xpath = "//android.view.View[@content-desc='Prescription']")
+    protected WebElement Prescription;
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

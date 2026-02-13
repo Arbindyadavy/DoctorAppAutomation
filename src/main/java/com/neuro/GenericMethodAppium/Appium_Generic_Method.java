@@ -47,12 +47,16 @@ public class Appium_Generic_Method {
         System.out.println("Starting Appium session...");
 
         DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability("deviceName", "emulator-5554");
+        capabilities.setCapability("deviceName", "0J63605127208D44");
         capabilities.setCapability("platformName", "Android");
         capabilities.setCapability("automationName", "UiAutomator2");
-        capabilities.setCapability("platformVersion", "11");
+        capabilities.setCapability("platformVersion", "15");
         capabilities.setCapability("appPackage", "com.nedsappdoc");
+        //android    App appPackage RE58C6
+        //emuletro appPackage com.nedsappdoc       
+        //com.android.launcher3/com.android.searchlauncher.SearchLauncher
         capabilities.setCapability("appActivity", "com.nedsappdoc.MainActivity");
+
         capabilities.setCapability("noReset", true);
 
         driver = new AndroidDriver(
@@ -79,14 +83,27 @@ public class Appium_Generic_Method {
 
   
     public void logPass(String message) {
-        test.pass(message);
+        if (test != null) {
+            test.pass(message);
+        } else {
+            System.out.println("TEST OBJECT IS NULL - " + message);
+        }
     }
 
   
     public void logFail(String message) {
-        String path = takeScreenshot("FAIL");
-        test.fail(message,
-                MediaEntityBuilder.createScreenCaptureFromPath(path).build());
+        try {
+            String path = takeScreenshot("FAIL");
+            if (test != null) {
+                test.fail(message,
+                        MediaEntityBuilder.createScreenCaptureFromPath(path).build());
+            } else {
+                System.out.println("TEST OBJECT IS NULL - " + message);
+            }
+        } catch (Exception e) {
+            System.out.println("Error in logFail: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     public String takeScreenshot(String name) {
@@ -104,12 +121,18 @@ public class Appium_Generic_Method {
     }
 
    
-    public void click(WebElement element, String stepName) {
+    public void click(WebElement element, String stepName) throws Exception {
         try {
+            if (element == null) {
+                throw new Exception("Element is null - " + stepName);
+            }
+            if (driver == null) {
+                throw new Exception("Driver is null - getCapabilities() might have failed");
+            }
             wait.until(ExpectedConditions.elementToBeClickable(element)).click();
             logPass(stepName + " clicked successfully");
         } catch (Exception e) {
-            logFail(stepName + " click failed");
+            logFail(stepName + " click failed: " + e.getMessage());
             throw e;
         }
     }
